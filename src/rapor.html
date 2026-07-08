@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Presiyometre Rapor</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <!-- Üst Toolbar -->
+    <div class="top-toolbar">
+        <span>📄 <strong id="raporSayisi">0</strong> rapor föyü</span>
+        <button class="btn btn-danger" onclick="downloadAllPDF()">📥 PDF İndir</button>
+        <a href="index.html" class="btn btn-success">← Geri</a>
+    </div>
+
+    <div id="raporContainer"></div>
+
+    <script src="js/hesaplama.js"></script>
+    <script src="js/pdf.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const data = localStorage.getItem('presiyometre_raporlar');
+            if (!data) {
+                document.getElementById('raporContainer').innerHTML = '<div class="container"><div class="card"><p>Rapor verisi bulunamadı. <a href="index.html">Geri dönün</a>.</p></div></div>';
+                return;
+            }
+
+            const raporlar = JSON.parse(data);
+            document.getElementById('raporSayisi').textContent = raporlar.length;
+
+            const container = document.getElementById('raporContainer');
+
+            raporlar.forEach(function(rapor, idx) {
+                const foyIdx = idx + 1;
+                const html = createRaporHTML(rapor, foyIdx);
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        });
+
+        function createRaporHTML(rapor, idx) {
+            // Tablo satırları
+            let tabloRows = '';
+            rapor.tablo.forEach(function(row) {
+                tabloRows += `<tr>
+                    <td>${row.kademe}</td>
+                    <td>${row.basinc}</td>
+                    <td>${row.hacim}</td>
+                    <td>${row.hidrost}</td>
+                    <td>${row.hacimDuz}</td>
+                    <td>${row.duzHacim}</td>
+                    <td>${row.mebranDuz}</td>
+                    <td>${row.duzBasinc}</td>
+                </tr>`;
+            });
+
+            const s = rapor.sonuclar;
+
+            return `
+            <div class="rapor-sayfa" id="foy_${idx}">
+                <div class="foy-toolbar">
+                    <button class="btn btn-danger" onclick="downloadFoyPDF(${idx}, '${rapor.kuyu_no}', '${rapor.deney_derinligi}')">📥 PDF</button>
+                </div>
+
+                <div style="text-align:center; margin-bottom:12px;">
+                    <strong style="font-size:1.1em;">${rapor.firma_adi}</strong><br>
+                    <span style="font-size:0.9em;">PRESİYOMETRE DENEY RAPORU</span>
+                </div>
+
+                <div style="font-size:0.8em; margin-bottom:10px;">
+                    <strong>Proje:</strong> ${rapor.proje_adi} | 
+                    <strong>Kuyu:</strong> ${rapor.kuyu_no} | 
+                    <strong>Derinlik:</strong> ${rapor.deney_derinligi} m |
+                    <strong>Tarih:</strong> ${rapor.deney_tarih}
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Kademe</th>
+                            <th>Basınç<br>(bar)</th>
+                            <th>Hacim<br>(cm³)</th>
+                            <th>Hidrost.<br>(kg/cm²)</th>
+                            <th>Hacim<br>Düz.</th>
+                            <th>Düz.<br>Hacim</th>
+                            <th>Mebran<br>Düz.</th>
+                            <th>Düz.<br>Basınç</th>
+                        </tr>
+                    </thead>
+                    <tbody>${tabloRows}</tbody>
+                </table>
+
+                <div class="sonuc-grid">
+                    <div class="sonuc-item">
+                        <div class="label">Limit Basınç (PL)</div>
+                        <div class="value">${s.limitBasinc} kg/cm²</div>
+                    </div>
+                    <div class="sonuc-item">
+                        <div class="label">Elastisite Modülü (EM)</div>
+                        <div class="value">${s.elastisite} kg/cm²</div>
+                    </div>
+                    <div class="sonuc-item">
+                        <div class="label">Net Limit Basınç (PL*)</div>
+                        <div class="value">${s.netLimit} kg/cm²</div>
+                    </div>
+                    <div class="sonuc-item">
+                        <div class="label">EM / PL*</div>
+                        <div class="value">${s.ePl}</div>
+                    </div>
+                    <div class="sonuc-item">
+                        <div class="label">Pi / Vi</div>
+                        <div class="value">${s.pi} / ${s.vi}</div>
+                    </div>
+                    <div class="sonuc-item">
+                        <div class="label">Pf / Vf</div>
+                        <div class="value">${s.pf} / ${s.vf}</div>
+                    </div>
+                </div>
+
+                ${rapor.sorumlu_adi ? `<div style="margin-top:12px; font-size:0.75em; text-align:right; color:#7f8c8d;">
+                    ${rapor.sorumlu_adi} - ${rapor.sorumlu_unvan}<br>${rapor.adres}
+                </div>` : ''}
+            </div>`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Presiyometre Rapor</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="app-header">
+        <h1>Presiyometre Deney Raporu</h1>
+        <div class="subtitle">Pressuremeter Test Report</div>
+    </header>
+
+    <div class="container">
+        <form id="presiyometreForm">
+
+            <!-- Firma Bilgileri -->
+            <div class="card">
+                <h2>🏢 Firma Bilgileri</h2>
+                <div class="form-row">
+                    <label>Firma Adı</label>
+                    <input type="text" name="firma_adi" value="HAN İNŞAAT & MÜHENDİSLİK">
+                </div>
+                <div class="form-row">
+                    <label>Sorumlu Adı</label>
+                    <input type="text" name="sorumlu_adi" placeholder="İsim Soyisim">
+                </div>
+                <div class="form-row">
+                    <label>Unvan</label>
+                    <input type="text" name="sorumlu_unvan" placeholder="Jeoloji Mühendisi">
+                </div>
+                <div class="form-row">
+                    <label>Sicil No</label>
+                    <input type="text" name="sicil_no" placeholder="">
+                </div>
+                <div class="form-row">
+                    <label>Adres</label>
+                    <input type="text" name="adres" placeholder="">
+                </div>
+                <div class="form-row">
+                    <label>İletişim</label>
+                    <input type="text" name="iletisim" placeholder="Tel / E-posta">
+                </div>
+            </div>
+
+            <!-- Proje Bilgileri -->
+            <div class="card">
+                <h2>📋 Proje Bilgileri</h2>
+                <div class="form-row">
+                    <label>Proje Adı</label>
+                    <input type="text" name="proje_adi" placeholder="Proje adı" required>
+                </div>
+                <div class="form-row">
+                    <label>Müşteri Adı</label>
+                    <input type="text" name="musteri_adi" placeholder="Müşteri adı">
+                </div>
+                <div class="form-row">
+                    <label>Proje Numarası</label>
+                    <input type="text" name="proje_numarasi" placeholder="">
+                </div>
+                <div class="form-row">
+                    <label>Deney Tarihi</label>
+                    <input type="date" name="deney_tarih">
+                </div>
+            </div>
+
+            <!-- Deney Parametreleri -->
+            <div class="card">
+                <h2>⚙️ Deney Parametreleri</h2>
+                <div class="form-row">
+                    <label>Presiyometre Türü</label>
+                    <select name="presiyometre_turu">
+                        <option value="Menard GC">Menard GC</option>
+                        <option value="Menard G">Menard G</option>
+                        <option value="Menard GB">Menard GB</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label>Sonda Çapı (mm)</label>
+                    <input type="number" name="sonda_capi" value="76">
+                </div>
+                <div class="form-row">
+                    <label>Sıfır Hacim (cm³)</label>
+                    <input type="number" name="sifir_vol_hacim" value="535">
+                </div>
+                <div class="form-row">
+                    <label>Manometre Yüksekliği (m)</label>
+                    <input type="number" name="manometre_yuksekligi" value="0.60" step="0.01">
+                </div>
+            </div>
+
+            <!-- Kuyu Bilgileri -->
+            <div class="card">
+                <h2>🕳️ Kuyu ve Derinlik Bilgileri</h2>
+                <div id="kuyuContainer">
+                    <div class="kuyu-block">
+                        <div class="kuyu-header">
+                            <h3>Kuyu 1</h3>
+                        </div>
+                        <div class="form-row">
+                            <label>Kuyu Adı</label>
+                            <input type="text" name="kuyu_1_adi" value="SK-1" required>
+                        </div>
+                        <div class="form-row">
+                            <label>Deney Derinlikleri (m)</label>
+                            <input type="text" name="kuyu_1_derinlikler" placeholder="3, 6, 9, 12" required>
+                            <small>Virgülle ayırarak yazın</small>
+                        </div>
+                        <div class="form-row">
+                            <label>Max Basınç (bar)</label>
+                            <input type="number" name="kuyu_1_basinc" value="20" min="5" max="100">
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn-add" id="kuyuEkle">+ Kuyu Ekle</button>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="btn btn-primary">📊 Rapor Oluştur</button>
+        </form>
+    </div>
+
+    <script src="js/hesaplama.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
