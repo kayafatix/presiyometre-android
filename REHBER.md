@@ -2,7 +2,7 @@
 ## Presiyometre Deney Raporu - Mobil Uygulama
 
 Bu rehber, presiyometre uygulamasının Android APK dosyasını oluşturmak için
-adım adım tüm süreci anlatır. Hiçbir adımı atlamayın.
+adım adım tüm süreci anlatır. **macOS (MacBook)** üzerinde çalışmak üzere hazırlanmıştır.
 
 ---
 
@@ -10,22 +10,29 @@ adım adım tüm süreci anlatır. Hiçbir adımı atlamayın.
 
 ### 1. Node.js Kurulumu
 
-1. Tarayıcıda aç: https://nodejs.org
-2. Yeşil **"LTS"** butonuna tıkla → indirmeye başlar
-3. İndirilen `.msi` dosyasını çift tıkla
-4. Kurulumda tüm ayarları varsayılan bırak → Next → Next → Install → Finish
-5. **Doğrulama:** PowerShell aç, yaz:
-   ```
-   node --version
-   ```
-   `v18.x.x` veya üzeri görmeli
+**Homebrew ile (önerilen):**
+```bash
+# Homebrew yoksa önce kur:
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Node.js kur:
+brew install node
+```
+
+**Veya:** https://nodejs.org adresinden macOS installer (.pkg) indir ve kur.
+
+**Doğrulama:**
+```bash
+node --version    # v18.x.x veya üzeri
+npm --version
+```
 
 ### 2. Android Studio Kurulumu
 
 1. Tarayıcıda aç: https://developer.android.com/studio
-2. **"Download Android Studio"** tıkla → Şartları kabul et → İndir (~1 GB)
-3. İndirilen `.exe` dosyasını çift tıkla
-4. Kurulum adımları:
+2. **"Download Android Studio"** → macOS (Apple Silicon veya Intel) seç → İndir
+3. İndirilen `.dmg` dosyasını aç → Android Studio'yu `Applications` klasörüne sürükle
+4. İlk açılışta:
    - "Do not import settings" seç → OK
    - Install Type: **Standard** seç → Next
    - SDK bileşenleri inecek (3-5 GB) → **bekle, bu uzun sürer**
@@ -35,10 +42,22 @@ adım adım tüm süreci anlatır. Hiçbir adımı atlamayın.
 ### 3. Java JDK Kontrolü
 
 Android Studio genelde JDK'yı otomatik kurar. Kontrol:
-```
+```bash
 java -version
 ```
-Eğer hata alıyorsan: https://adoptium.net adresinden JDK 17 indir ve kur.
+Eğer hata alıyorsan:
+```bash
+brew install openjdk@17
+```
+
+### 4. ANDROID_HOME Ortam Değişkeni
+
+`~/.zshrc` dosyasına ekle (Terminal'de):
+```bash
+echo 'export ANDROID_HOME=$HOME/Library/Android/sdk' >> ~/.zshrc
+echo 'export PATH=$PATH:$ANDROID_HOME/platform-tools' >> ~/.zshrc
+source ~/.zshrc
+```
 
 ---
 
@@ -46,14 +65,14 @@ Eğer hata alıyorsan: https://adoptium.net adresinden JDK 17 indir ve kur.
 
 ### Adım 1: Proje klasörüne git
 
-PowerShell aç ve yaz:
-```powershell
-cd C:\Zemin_etut\presiyometre-android
+Terminal aç ve yaz:
+```bash
+cd ~/path/to/presiyometre-android
 ```
 
 ### Adım 2: Node.js bağımlılıklarını kur
 
-```powershell
+```bash
 npm install
 ```
 Bu komut `package.json`'daki bağımlılıkları (Capacitor) kurar.
@@ -61,7 +80,7 @@ Birkaç dakika sürebilir. Bittiğinde `node_modules` klasörü oluşur.
 
 ### Adım 3: Capacitor'ı başlat
 
-```powershell
+```bash
 npx cap init "Presiyometre Rapor" "com.haninsan.presiyometre" --web-dir src
 ```
 
@@ -73,7 +92,7 @@ Bu komut `capacitor.config.ts` dosyasını günceller.
 
 ### Adım 4: Android platformunu ekle
 
-```powershell
+```bash
 npx cap add android
 ```
 
@@ -82,7 +101,7 @@ Bu komut `android/` klasörünü oluşturur (Android Studio projesi).
 
 ### Adım 5: Web dosyalarını Android'e senkronize et
 
-```powershell
+```bash
 npx cap sync android
 ```
 
@@ -90,7 +109,7 @@ Bu komut `src/` klasöründeki dosyaları Android projesine kopyalar.
 
 ### Adım 6: Android Studio'da projeyi aç
 
-```powershell
+```bash
 npx cap open android
 ```
 
@@ -108,13 +127,13 @@ Sağ alt köşedeki progress bar'ın bitmesini bekle.
 
 APK konumu:
 ```
-C:\Zemin_etut\presiyometre-android\android\app\build\outputs\apk\debug\app-debug.apk
+presiyometre-android/android/app/build/outputs/apk/debug/app-debug.apk
 ```
 
 ### Adım 8: APK'yı yeniden adlandır (isteğe bağlı)
 
-```powershell
-Copy-Item "android\app\build\outputs\apk\debug\app-debug.apk" "PresiyometreRapor.apk"
+```bash
+cp android/app/build/outputs/apk/debug/app-debug.apk PresiyometreRapor.apk
 ```
 
 ---
@@ -131,18 +150,18 @@ Copy-Item "android\app\build\outputs\apk\debug\app-debug.apk" "PresiyometreRapor
 1. APK dosyasını e-postaya ekle ve gönder
 2. Alıcı indirip kurar (aynı izin adımları)
 
-### USB ile:
-1. APK'yı telefona USB ile kopyala
-2. Dosya yöneticisinden APK'ya tıkla → Kur
+### AirDrop + USB:
+1. APK'yı AirDrop ile Android telefona gönderemezsin (sadece iOS arası)
+2. USB veya Google Drive/e-posta kullan
 
 ---
 
 ## GÜNCELLEME YAPMAK İSTERSEN
 
 1. `src/` klasöründeki dosyaları düzenle (index.html, rapor.html, js/, css/)
-2. PowerShell'de:
-   ```powershell
-   cd C:\Zemin_etut\presiyometre-android
+2. Terminal'de:
+   ```bash
+   cd ~/path/to/presiyometre-android
    npx cap sync android
    ```
 3. Android Studio'da tekrar: **Build → Build APK(s)**
@@ -152,15 +171,19 @@ Copy-Item "android\app\build\outputs\apk\debug\app-debug.apk" "PresiyometreRapor
 
 ## SORUN GİDERME
 
-### "npm not recognized" hatası
-→ Node.js kurulumunu tekrarla, kurulumdan sonra PowerShell'i kapat-aç
+### "npm: command not found" hatası
+→ Node.js kurulumunu tekrarla: `brew install node`
 
-### "cap not recognized" hatası
+### "cap: command not found" hatası
 → `npm install` komutunu çalıştırdığından emin ol
 
 ### Android Studio "Gradle sync failed"
-→ Internet bağlantını kontrol et (ilk seferde bağımlılıklar inecek)
+→ İnternet bağlantını kontrol et (ilk seferde bağımlılıklar inecek)
 → Android Studio'yu kapat → tekrar `npx cap open android`
+→ macOS'ta proxy/VPN varsa kapat
+
+### "ANDROID_HOME is not set" hatası
+→ Yukarıdaki "ANDROID_HOME Ortam Değişkeni" adımını uygula
 
 ### APK telefona kurulmuyor
 → Telefon ayarlarından: Güvenlik → "Bilinmeyen uygulamalara izin ver" aç
@@ -176,6 +199,7 @@ Copy-Item "android\app\build\outputs\apk\debug\app-debug.apk" "PresiyometreRapor
 
 ```
 presiyometre-android/
+├── .gitignore             ← Git'e dahil edilmeyecek dosyalar
 ├── REHBER.md              ← Bu dosya
 ├── package.json           ← Node.js bağımlılıkları
 ├── capacitor.config.ts    ← Capacitor ayarları
@@ -190,8 +214,8 @@ presiyometre-android/
 │   │   └── pdf.js         ← PDF oluşturma
 │   └── img/
 │       └── logo.png       ← Firma logosu
-├── node_modules/          ← (npm install sonrası oluşur)
-└── android/               ← (npx cap add android sonrası oluşur)
+├── node_modules/          ← (npm install sonrası oluşur - GIT'E DAHİL DEĞİL)
+└── android/               ← (npx cap add android sonrası oluşur - GIT'E DAHİL DEĞİL)
     └── app/build/outputs/apk/debug/
         └── app-debug.apk  ← SONUÇ: Bu dosyayı dağıt
 ```
@@ -200,8 +224,8 @@ presiyometre-android/
 
 ## ÖZET KOMUTLAR (Sadece ilk sefer)
 
-```powershell
-cd C:\Zemin_etut\presiyometre-android
+```bash
+cd ~/path/to/presiyometre-android
 npm install
 npx cap init "Presiyometre Rapor" "com.haninsan.presiyometre" --web-dir src
 npx cap add android
@@ -212,8 +236,8 @@ npx cap open android
 
 ## ÖZET KOMUTLAR (Güncelleme sonrası)
 
-```powershell
-cd C:\Zemin_etut\presiyometre-android
+```bash
+cd ~/path/to/presiyometre-android
 npx cap sync android
 npx cap open android
 # → Android Studio'da: Build → Build APK(s)
